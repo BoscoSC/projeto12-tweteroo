@@ -42,10 +42,8 @@ app.post("/tweets", (req, res) => {
 });
 
 app.get("/tweets", (req, res) => {
-  const { username } = req.body;
-  const { avatar } = users.find((user) => user.username === username);
-
   tweets.forEach((tweet) => {
+    const { avatar } = users.find((user) => user.username === tweet.username);
     tweet.avatar = avatar;
   });
 
