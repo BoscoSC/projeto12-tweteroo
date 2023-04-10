@@ -50,7 +50,7 @@ app.get("/tweets", (req, res) => {
   });
 
   const shownTweets = tweets.slice(-10);
-  res.send(shownTweets);
+  res.status(200).send(shownTweets);
 });
 
 const PORT = 5000;
