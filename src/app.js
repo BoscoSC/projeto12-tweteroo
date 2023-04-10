@@ -22,21 +22,22 @@ app.post("/sign-up", (req, res) => {
 });
 
 app.post("/tweets", (req, res) => {
-  const { username, tweet } = req.body;
+  const { tweet } = req.body;
+  const { user } = req.headers;
 
-  if (!username || !tweet) {
+  if (!tweet) {
     res.status(400).send("Todos os campos são obrigatórios!");
     return;
   }
 
-  const userExists = users.find((user) => user.username === username);
+  const userExists = users.find(user);
 
   if (!userExists) {
     res.status(400).send("UNAUTHORIZED");
     return;
   }
 
-  tweets.push(req.body);
+  tweets.push({ username: user, tweet });
   res.status(201).send("OK");
   return;
 });
@@ -64,6 +65,16 @@ app.get("/tweets", (req, res) => {
 
   const shownTweets = tweets.slice(-10);
   res.status(200).send(shownTweets);
+});
+
+app.get("/tweets:username", (req, res) => {
+  const { username } = req.params;
+
+  const userTweets = tweets.filter(
+    (tweet) => tweet.username.toLowerCase() === username.toLowerCase()
+  );
+
+  res.send(userTweets);
 });
 
 const PORT = 5000;
