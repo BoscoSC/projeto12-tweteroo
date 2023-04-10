@@ -42,10 +42,25 @@ app.post("/tweets", (req, res) => {
 });
 
 app.get("/tweets", (req, res) => {
+  const { page } = req.query.page;
+
   tweets.forEach((tweet) => {
     const { avatar } = users.find((user) => user.username === tweet.username);
     tweet.avatar = avatar;
   });
+
+  if (page < 1 && !page) {
+    res.status(400).send("Informe uma página válida!");
+    return;
+  }
+
+  const limitTweets = 10;
+  const firstTweet = (page - 1) * limitTweets;
+  const finalTweet = page * limitTweets;
+
+  if (page) {
+    res.status(200).send(filteredTweets.slice(firstTweet, finalTweet));
+  }
 
   const shownTweets = tweets.slice(-10);
   res.status(200).send(shownTweets);
