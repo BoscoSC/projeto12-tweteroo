@@ -21,7 +21,25 @@ app.post("/sign-up", (req, res) => {
   return;
 });
 
-app.post("/tweet", (req, res) => {});
+app.post("/tweet", (req, res) => {
+  const { username, tweet } = req.body;
+
+  if (!username || !tweet) {
+    res.status(400).send("Todos os campos são obrigatórios!");
+    return;
+  }
+
+  const userExists = users.find((user) => user.username === username);
+
+  if (!userExists) {
+    res.status(400).send("UNAUTHORIZED");
+    return;
+  }
+
+  tweets.push(req.body);
+  res.status(201).send("OK");
+  return;
+});
 
 const PORT = 5000;
 app.listen(PORT, console.log(`Rodando na PORTA => ${PORT}`));
