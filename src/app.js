@@ -16,6 +16,11 @@ app.post("/sign-up", (req, res) => {
     return;
   }
 
+  if (typeof username !== "string" && typeof avatar !== "string") {
+    res.status(400).send("Todos os campos são obrigatórios!");
+    return;
+  }
+
   users.push(req.body);
   res.status(201).send("OK");
   return;
@@ -30,7 +35,12 @@ app.post("/tweets", (req, res) => {
     return;
   }
 
-  const userExists = users.find(user);
+  if (typeof tweet !== "string") {
+    res.status(400).send("Todos os campos são obrigatórios!");
+    return;
+  }
+
+  const userExists = users.find((user) => user.username === user);
 
   if (!userExists) {
     res.status(400).send("UNAUTHORIZED");
@@ -43,7 +53,7 @@ app.post("/tweets", (req, res) => {
 });
 
 app.get("/tweets", (req, res) => {
-  const { page } = req.query.page;
+  const { page } = req.query;
 
   tweets.forEach((tweet) => {
     const { avatar } = users.find((user) => user.username === tweet.username);
@@ -61,6 +71,7 @@ app.get("/tweets", (req, res) => {
 
   if (page) {
     res.status(200).send(filteredTweets.slice(firstTweet, finalTweet));
+    return;
   }
 
   const shownTweets = tweets.slice(-10);
