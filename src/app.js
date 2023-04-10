@@ -21,7 +21,7 @@ app.post("/sign-up", (req, res) => {
   return;
 });
 
-app.post("/tweet", (req, res) => {
+app.post("/tweets", (req, res) => {
   const { username, tweet } = req.body;
 
   if (!username || !tweet) {
@@ -39,6 +39,18 @@ app.post("/tweet", (req, res) => {
   tweets.push(req.body);
   res.status(201).send("OK");
   return;
+});
+
+app.get("/tweets", (req, res) => {
+  const { username } = req.body;
+  const { avatar } = users.find((user) => user.username === username);
+
+  tweets.forEach((tweet) => {
+    tweet.avatar = avatar;
+  });
+
+  const shownTweets = tweets.slice(-10);
+  res.send(shownTweets);
 });
 
 const PORT = 5000;
