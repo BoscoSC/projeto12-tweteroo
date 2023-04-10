@@ -16,76 +16,40 @@ app.post("/sign-up", (req, res) => {
     return;
   }
 
-  if (typeof username !== "string" && typeof avatar !== "string") {
-    res.status(400).send("Todos os campos são obrigatórios!");
-    return;
-  }
-
   users.push(req.body);
   res.status(201).send("OK");
   return;
 });
 
 app.post("/tweets", (req, res) => {
-  const { tweet } = req.body;
-  const { user } = req.headers;
+  const { username, tweet } = req.body;
 
-  if (!tweet) {
+  if (!username || !tweet) {
     res.status(400).send("Todos os campos são obrigatórios!");
     return;
   }
 
-  if (typeof tweet !== "string") {
-    res.status(400).send("Todos os campos são obrigatórios!");
-    return;
-  }
-
-  const userExists = users.find((user) => user.username === user);
+  const userExists = users.find((user) => user.username === username);
 
   if (!userExists) {
     res.status(400).send("UNAUTHORIZED");
     return;
   }
 
-  tweets.push({ username: user, tweet });
+  tweets.push(req.body);
   res.status(201).send("OK");
   return;
 });
 
 app.get("/tweets", (req, res) => {
-  const { page } = req.query;
-
   tweets.forEach((tweet) => {
     const { avatar } = users.find((user) => user.username === tweet.username);
     tweet.avatar = avatar;
   });
 
-  if (page < 1 && !page) {
-    res.status(400).send("Informe uma página válida!");
-    return;
-  }
-
-  const limitTweets = 10;
-  const firstTweet = (page - 1) * limitTweets;
-  const finalTweet = page * limitTweets;
-
-  if (page) {
-    res.status(200).send(filteredTweets.slice(firstTweet, finalTweet));
-    return;
-  }
-
   const shownTweets = tweets.slice(-10);
   res.status(200).send(shownTweets);
-});
-
-app.get("/tweets:username", (req, res) => {
-  const { username } = req.params;
-
-  const userTweets = tweets.filter(
-    (tweet) => tweet.username.toLowerCase() === username.toLowerCase()
-  );
-
-  res.send(userTweets);
+  return;
 });
 
 const PORT = 5000;
